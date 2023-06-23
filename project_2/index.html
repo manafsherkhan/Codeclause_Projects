@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Timer and Stopwatch</title>
+  <style>
+    /* CSS styles for the timer and stopwatch */
+    body {
+      font-family: Arial, sans-serif;
+    }
+    
+    .container {
+      margin: 20px auto;
+      max-width: 400px;
+    }
+    
+    h2 {
+      text-align: center;
+    }
+    
+    .timer,
+    .stopwatch {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    
+    .timer label,
+    .stopwatch label {
+      font-size: 24px;
+      margin-right: 10px;
+    }
+    
+    .timer input,
+    .stopwatch input {
+      width: 80px;
+      padding: 5px;
+      text-align: center;
+    }
+    
+    .buttons {
+      display: flex;
+      justify-content: center;
+    }
+    
+    button {
+      margin: 0 5px;
+      padding: 10px 20px;
+      background-color: red;
+      color: yellow;
+      border: none;
+      cursor: pointer;
+    }
+    
+    #output {
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Timer and Stopwatch</h2>
+    
+    <div class="timer">
+      <label>Set Timer:</label>
+      <input type="number" id="timerInput" min="0">
+      <span>seconds</span>
+    </div>
+    
+    <div class="stopwatch">
+      <label>Stopwatch:</label>
+      <input type="text" id="stopwatchOutput" readonly>
+    </div>
+    
+    <div class="buttons">
+      <button onclick="startTimer()">Start Timer</button>
+      <button onclick="stopTimer()">Stop Timer</button>
+      <button onclick="startStopwatch()">Start Stopwatch</button>
+      <button onclick="stopStopwatch()">Stop Stopwatch</button>
+      <button onclick="resetStopwatch()">Reset Stopwatch</button>
+    </div>
+    
+    <div id="output"></div>
+  </div>
+
+  <script>
+    var timerInterval;
+    var stopwatchInterval;
+    var stopwatchStartTime;
+    var stopwatchElapsedTime = 0;
+    
+    function startTimer() {
+      var timerInput = document.getElementById("timerInput");
+      var output = document.getElementById("output");
+      
+      if (timerInput.value > 0) {
+        var seconds = timerInput.value;
+        timerInterval = setInterval(function() {
+          seconds--;
+          if (seconds <= 0) {
+            clearInterval(timerInterval);
+            output.textContent = "Timer completed!";
+          } else {
+            output.textContent = "Timer: " + seconds + " seconds remaining";
+          }
+        }, 1000);
+      } else {
+        output.textContent = "Invalid timer value";
+      }
+    }
+    
+    function stopTimer() {
+      clearInterval(timerInterval);
+    }
+    
+    function startStopwatch() {
+      var stopwatchOutput = document.getElementById("stopwatchOutput");
+      stopwatchStartTime = Date.now() - stopwatchElapsedTime;
+      
+      stopwatchInterval = setInterval(function() {
+        var elapsed = Date.now() - stopwatchStartTime;
+        stopwatchElapsedTime = elapsed;
+        
+        var milliseconds = Math.floor((elapsed % 1000) / 10);
+        var seconds = Math.floor((elapsed / 1000) % 60);
+        var minutes = Math.floor((elapsed / (1000 * 60)) % 60);
+        var hours = Math.floor((elapsed / (1000 * 60 * 60)) % 24);
+        
+        stopwatchOutput.value = formatTime(hours) + ":" + formatTime(minutes) + ":" + formatTime(seconds) + "." + formatTime(milliseconds);
+      }, 10);
+    }
+    
+    function stopStopwatch() {
+      clearInterval(stopwatchInterval);
+    }
+    
+    function resetStopwatch() {
+      clearInterval(stopwatchInterval);
+      var stopwatchOutput = document.getElementById("stopwatchOutput");
+      stopwatchOutput.value = "";
+      stopwatchStartTime = undefined;
+      stopwatchElapsedTime = 0;
+    }
+    
+    function formatTime(time) {
+      return time.toString().padStart(2, "0");
+    }
+  </script>
+</body>
+</html>
